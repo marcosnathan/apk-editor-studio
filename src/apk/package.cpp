@@ -115,20 +115,30 @@ Commands *Package::createCommandChain()
 
 Command *Package::createUnpackCommand()
 {
-    QString target;
-    do {
-        const QString uuid = QUuid::createUuid().toString();
-        target = QDir::toNativeSeparators(QString("%1/%2").arg(Apktool::getOutputPath(), uuid));
-    } while (target.isEmpty() || QDir(target).exists());
-
     const QString source(getOriginalPath());
     const QString frameworks = Apktool::getFrameworksPath();
-
     withResources = true;
     withSources = app->settings->getDecompileSources();
     withBrokenResources = app->settings->getKeepBrokenResources();
     withNoDebugInfo = app->settings->getDecompileNoDebugInfo();
     withOnlyMainClasses = app->settings->getDecompileOnlyMainClasses();
+    withDecompiledFolderRandomName = app->settings->getDecompiledFolderRandomName();
+
+    QString target;
+    if (withDecompiledFolderRandomName) {
+        do {
+            const QString uuid = QUuid::createUuid().toString();
+            qDebug() << "UUID: " << uuid;
+            target = QDir::toNativeSeparators(QString("%1/%2").arg(Apktool::getOutputPath(), uuid));
+        } while (target.isEmpty() || QDir(target).exists());
+    } else {
+        const auto sourceName = QFileInfo(source).fileName();
+        target = QDir::toNativeSeparators(QString("%1/%2").arg(Apktool::getOutputPath(), sourceName));
+    }
+
+
+    qDebug() << "Source: " << source;
+    qDebug() << "Target: " << target;
 
     QDir().mkpath(target);
     QDir().mkpath(frameworks);
