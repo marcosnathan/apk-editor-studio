@@ -348,7 +348,7 @@ void OptionsDialog::initialize()
     checkboxOnlyMainClasses = new QCheckBox(tr("Decompile only main classes"), this);
     checkboxNoDebugInfo = new QCheckBox(tr("Decompile without debug info"), this);
     checkboxBrokenResources = new QCheckBox(tr("Decompile broken resources"), this);
-    checkboxDecompiledFolderRandomName = new QCheckBox("Decompiled folder random name", this);
+    checkboxDecompiledFolderRandomName = new QCheckBox(tr("Decompiled folder random name"), this);
 
     auto layoutUnpacking = new QVBoxLayout(groupUnpacking);
     layoutUnpacking->addWidget(checkboxSources);
