@@ -80,21 +80,28 @@ jobs:
     name: Linux Build (AppImage)
     runs-on: ubuntu-22.04
     steps:
-      - name: Install Dependencies
-        run: |
-          sudo add-apt-repository ppa:beineri/opt-qt-5.15.2-jammy -y
-          sudo apt-get update -qq
-          sudo apt-get install qt515base qt515imageformats qt515svg qt515tools libgl1-mesa-dev libsecret-1-dev adb zipalign
       - name: Checkout Repo
         uses: actions/checkout@v4
-      - name: Download Tools
-        run: python3 scripts/download.py
-      - name: Build AppImage Package
-        id: build
+      - name: Build AppImage (Ubuntu 20.04 container)
         run: |
-          source /opt/qt515/bin/qt515-env.sh || true
-          scripts/linux/packages/appimage/build.appimage.sh
-          echo "VERSION=$(cat VERSION)" >> $GITHUB_ENV
+          docker run --rm \
+            -v "$PWD:/src" \
+            -w /src \
+            ubuntu:20.04 bash -c "
+            set -e
+            apt update
+            apt install -y software-properties-common curl git python3
+            add-apt-repository ppa:beineri/opt-qt-5.15.2-focal -y
+            apt update
+            apt install -y \
+              qt515base qt515imageformats qt515svg qt515tools \
+              libgl1-mesa-dev libsecret-1-dev adb zipalign
+            source /opt/qt515/bin/qt515-env.sh
+            python3 scripts/download.py
+            scripts/linux/packages/appimage/build.appimage.sh
+          "
+      - name: Export version
+        run: echo "VERSION=$(cat VERSION)" >> $GITHUB_ENV
       - name: Upload Assets
         uses: ncipollo/release-action@v1
         with:
