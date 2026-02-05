@@ -108,7 +108,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
   build-macos:
     name: macOS Build (APP, DMG)
-    runs-on: macos-13
+    runs-on: macos-latest
     steps:
       - name: Install Qt
         uses: jurplel/install-qt-action@v3
