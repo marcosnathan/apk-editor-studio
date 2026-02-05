@@ -85,6 +85,8 @@ jobs:
       - name: Build AppImage (Ubuntu 20.04 container)
         run: |
           docker run --rm \
+            -e DEBIAN_FRONTEND=noninteractive \
+            -e TZ=UTC \
             -v "$PWD:/src" \
             -w /src \
             ubuntu:20.04 bash -c "
